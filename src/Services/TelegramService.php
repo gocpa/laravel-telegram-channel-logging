@@ -4,42 +4,43 @@ declare(strict_types=1);
 
 namespace GoCPA\LaravelTelegramChannelLogging\Services;
 
-use GuzzleHttp\Client;
 use GuzzleHttp\Exception\GuzzleException;
-use Psr\Http\Message\ResponseInterface;
+use Illuminate\Support\Facades\Http;
 
 class TelegramService
 {
-    private Client $client;
+    private string $baseUri;
+
+    private ?int $messageId = null;
 
     /**
-     * @param string $telegramBotToken
-     * @param string $telegramChatId
+     * @param  string  $telegramBotToken
+     * @param  string  $telegramChatId
      */
     public function __construct(
         private readonly string $telegramBotToken,
         private readonly string $telegramChatId,
     ) {
-        $baseUri = 'https://api.telegram.org/bot' . $this->telegramBotToken . '/';
-
-        $this->client = new Client([
-            'base_uri' => $baseUri,
-        ]);
+        $this->baseUri = 'https://api.telegram.org/bot'.$this->telegramBotToken.'/';
     }
 
     /**
-     * @param string $message
+     * @param  string  $message
      * @return void
+     *
      * @throws GuzzleException
      */
     public function sendMessage(string $message): void
     {
-        $this->client->post('sendMessage', [
-            'query' => [
-                'chat_id' => $this->telegramChatId,
-                'parse_mode' => 'html',
-                'text' => $message,
-            ],
+        $endpoint = is_null($this->messageId) ? 'sendMessage' : 'sendMessage';
+
+        $response = Http::post($this->baseUri.$endpoint, [
+            'chat_id' => $this->telegramChatId,
+            'parse_mode' => 'html',
+            'text' => $message,
+            'message_id' => $this->messageId,
         ]);
+
+        $this->messageId = $response->json('result.message_id', null);
     }
 }

@@ -11,9 +11,9 @@ use Monolog\Logger;
 
 class TelegramChannelHandler extends AbstractProcessingHandler
 {
-    private string $appName;
-    private string $appEnv;
     private TelegramService $telegramService;
+
+    private string $text = '';
 
     /**
      * TelegramHandler constructor.
@@ -25,20 +25,25 @@ class TelegramChannelHandler extends AbstractProcessingHandler
         $monologLevel = Logger::toMonologLevel($config['level']);
         parent::__construct($monologLevel);
 
-        $this->appName = config('app.name');
-        $this->appEnv = config('app.env');
-
         $this->telegramService = new TelegramService(
             config('telegram-channel-logger.bot_token'),
             config('telegram-channel-logger.chat_id')
         );
+
+        $templateHeader = config('telegram-channel-logger.template_header');
+        $header = view($templateHeader, [
+            'appName' => config('app.name'),
+            'appEnv' => config('app.env'),
+        ])->render();
+        $this->text .= $header.PHP_EOL;
     }
 
     /**
      * Send log text to Telegram
      *
-     * @param array $record
+     * @param  array  $record
      * @return void
+     *
      * @throws GuzzleException
      */
     protected function write(array $record): void
@@ -49,7 +54,8 @@ class TelegramChannelHandler extends AbstractProcessingHandler
             'appName' => $this->appName,
             'appEnv'  => $this->appEnv,
         ]))->render();
+        $this->text .= $message.PHP_EOL;
 
-        $this->telegramService->sendMessage($message);
+        $this->telegramService->sendMessage($this->text);
     }
 }
