@@ -1,7 +1,7 @@
 <b>{{ $appName }}</b> ({{ $level_name }})
 Env: {{ $appEnv }}
 ---
-{{ $message }}
+{!! $message !!}
 ---
 @if ($context)
 <b>Context:</b>
