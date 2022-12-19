@@ -50,10 +50,9 @@ class TelegramChannelHandler extends AbstractProcessingHandler
     {
         $template = config('telegram-channel-logger.template');
 
-        $message = view($template, array_merge($record, [
-            'appName' => $this->appName,
-            'appEnv'  => $this->appEnv,
-        ]))->render();
+        $message = view($template, [
+            'message' => $record['message']
+        ])->render();
         $this->text .= $message.PHP_EOL;
 
         $this->telegramService->sendMessage($this->text);
