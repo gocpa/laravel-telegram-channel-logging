@@ -2,9 +2,9 @@
 
 namespace GoCPA\LaravelTelegramChannelLogging\Tests;
 
+use GoCPA\LaravelTelegramChannelLogging\LaravelTelegramChannelLoggingServiceProvider;
 use Illuminate\Database\Eloquent\Factories\Factory;
 use Orchestra\Testbench\TestCase as Orchestra;
-use GoCPA\LaravelTelegramChannelLogging\LaravelTelegramChannelLoggingServiceProvider;
 
 class TestCase extends Orchestra
 {

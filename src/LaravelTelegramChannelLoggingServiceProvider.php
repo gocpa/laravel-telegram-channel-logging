@@ -2,9 +2,9 @@
 
 namespace GoCPA\LaravelTelegramChannelLogging;
 
+use GoCPA\LaravelTelegramChannelLogging\Commands\LaravelTelegramChannelLoggingCommand;
 use Spatie\LaravelPackageTools\Package;
 use Spatie\LaravelPackageTools\PackageServiceProvider;
-use GoCPA\LaravelTelegramChannelLogging\Commands\LaravelTelegramChannelLoggingCommand;
 
 class LaravelTelegramChannelLoggingServiceProvider extends PackageServiceProvider
 {
